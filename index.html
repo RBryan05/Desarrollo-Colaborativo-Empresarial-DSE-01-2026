@@ -1,23 +1,266 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
+
 <head>
-    <title>Gestión de Productos</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Productos</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f2f5;
+            padding: 30px;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #2c3e50;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* FORMULARIO */
+        .form-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .form-card h2 {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            color: #2c3e50;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .form-grid .full {
+            grid-column: span 2;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-family: Arial, sans-serif;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        textarea {
+            resize: none;
+            height: 60px;
+        }
+
+        .check-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .check-row input {
+            width: auto;
+        }
+
+        .check-row label {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            padding: 9px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .btn-guardar {
+            background: #3498db;
+            color: #fff;
+        }
+
+        .btn-guardar:hover {
+            background: #2980b9;
+        }
+
+        .btn-cancelar {
+            background: #e0e0e0;
+            color: #555;
+            display: none;
+        }
+
+        .btn-cancelar:hover {
+            background: #ccc;
+        }
+
+        /* TABLA */
+        .tabla-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .tabla-card h2 {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            color: #2c3e50;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+        }
+
+        th {
+            background: #f8f9fa;
+            padding: 10px;
+            text-align: left;
+            border-bottom: 2px solid #e0e0e0;
+            color: #555;
+        }
+
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background: #fafafa;
+        }
+
+        .estado-si {
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .estado-no {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .btn-editar {
+            background: #f39c12;
+            color: #fff;
+            padding: 5px 12px;
+            font-size: 0.8rem;
+            margin-right: 5px;
+        }
+
+        .btn-editar:hover {
+            background: #e67e22;
+        }
+
+        .btn-eliminar {
+            background: #e74c3c;
+            color: #fff;
+            padding: 5px 12px;
+            font-size: 0.8rem;
+        }
+
+        .btn-eliminar:hover {
+            background: #c0392b;
+        }
+
+        .sin-datos {
+            text-align: center;
+            padding: 30px;
+            color: #aaa;
+        }
+    </style>
 </head>
+
 <body>
-    <h1>Listado de Productos</h1>
 
-    <div id="formulario">
-        <input type="text" id="nombre" placeholder="Nombre del producto">
-        <input type="number" id="precio" placeholder="Precio">
-        <button onclick="agregarProducto()">Agregar</button>
+    <div class="container">
+        <h1>📦 Gestión de Productos</h1>
+
+        <!-- FORMULARIO -->
+        <div class="form-card">
+            <h2 id="form-titulo">Agregar Producto</h2>
+
+            <input type="hidden" id="edit-id">
+
+            <div class="form-grid">
+                <div>
+                    <label>Nombre</label>
+                    <input type="text" id="inp-nombre" placeholder="Nombre del producto">
+                </div>
+                <div>
+                    <label>Precio ($)</label>
+                    <input type="number" id="inp-precio" placeholder="0.00" min="0" step="0.01">
+                </div>
+                <div>
+                    <label>Stock</label>
+                    <input type="number" id="inp-stock" placeholder="0" min="0">
+                </div>
+                <div>
+                    <label>Descripción</label>
+                    <textarea id="inp-descripcion" placeholder="Descripción breve..."></textarea>
+                </div>
+            </div>
+
+            <div class="check-row" style="margin-top: 12px;">
+                <input type="checkbox" id="inp-disponible" checked>
+                <label for="inp-disponible">Disponible</label>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn-guardar" onclick="guardar()">Guardar</button>
+                <button class="btn-cancelar" id="btn-cancelar" onclick="cancelar()">Cancelar</button>
+            </div>
+        </div>
+
+        <!-- TABLA -->
+        <div class="tabla-card">
+            <h2>Lista de Productos (<span id="total">0</span>)</h2>
+            <div id="tabla-container"></div>
+        </div>
     </div>
-
-    <ul id="listaProductos">
-        <li>Producto 1 - $10</li>
-        <li>Producto 2 - $25</li>
-        <li>Producto 3 - $40</li>
-    </ul>
 
     <script src="app.js"></script>
 </body>
+
 </html>
