@@ -1,4 +1,4 @@
-// ── Array de productos ──────────────────────────────────────────
+//Array de productos
 let productos = [
   {
     id: 1,
@@ -27,8 +27,9 @@ let productos = [
 ];
 
 let nextId = 4;
+let editandoId = null;
 
-// ── CREAR / ACTUALIZAR ──────────────────────────────────────────
+//CREAR / ACTUALIZAR 
 function guardar() {
   const nombre = document.getElementById("inp-nombre").value.trim();
   const descripcion = document.getElementById("inp-descripcion").value.trim();
@@ -36,19 +37,27 @@ function guardar() {
   const stock = parseInt(document.getElementById("inp-stock").value);
   const disponible = document.getElementById("inp-disponible").checked;
 
-  productos.push({
-    id: nextId++,
-    nombre,
-    descripcion,
-    precio,
-    stock,
-    disponible,
-  });
+  // Validaciones básicas
+  if (!nombre)               return alert("El nombre es obligatorio.");
+  if (isNaN(precio) || precio < 0) return alert("Ingresa un precio válido.");
+  if (isNaN(stock)  || stock < 0)  return alert("Ingresa un stock válido.");
+
+  if (editandoId !== null) {
+    // ACTUALIZAR
+    const indice = productos.findIndex(p => p.id === editandoId);
+    productos[indice] = { id: editandoId, nombre, descripcion, precio, stock, disponible };
+    cancelar();
+  } else {
+    // CREAR
+    productos.push({ id: nextId++, nombre, descripcion, precio, stock, disponible });
+    alert("Producto agregado exitosamente.");
+    limpiarFormulario();
+  }
 
   renderTabla();
 }
 
-// ── LEER / RENDERIZAR TABLA ─────────────────────────────────────
+//LEER / RENDERIZAR TABLA 
 function renderTabla() {
   const container = document.getElementById("tabla-container");
   document.getElementById("total").textContent = productos.length;
@@ -87,6 +96,15 @@ function renderTabla() {
       </thead>
       <tbody>${filas}</tbody>
     </table>`;
+}
+
+//HELPERS
+function limpiarFormulario() {
+  document.getElementById("inp-nombre").value      = "";
+  document.getElementById("inp-descripcion").value = "";
+  document.getElementById("inp-precio").value      = "";
+  document.getElementById("inp-stock").value       = "";
+  document.getElementById("inp-disponible").checked = true;
 }
 
 renderTabla();
