@@ -1,266 +1,492 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUD Productos</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRUD Productos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        body {
-            font-family: Arial, sans-serif;
-            background: #f0f2f5;
-            padding: 30px;
-            color: #333;
-        }
+    :root {
+      --primary: #4f46e5;
+      --primary-dark: #3730a3;
+      --primary-light: #e0e7ff;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --success: #10b981;
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+    }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 25px;
-            color: #2c3e50;
-        }
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
+    /* ── NAVBAR ── */
+    nav {
+      background: var(--primary);
+      box-shadow: 0 4px 20px rgba(79,70,229,0.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
 
-        /* FORMULARIO */
-        .form-card {
-            background: #fff;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
+    .nav-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 62px;
+    }
 
-        .form-card h2 {
-            margin-bottom: 15px;
-            font-size: 1.1rem;
-            color: #2c3e50;
-        }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: #fff;
+      text-decoration: none;
+    }
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
+    .nav-brand span.icon { font-size: 1.5rem; }
 
-        .form-grid .full {
-            grid-column: span 2;
-        }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
 
-        label {
-            display: block;
-            font-size: 0.85rem;
-            margin-bottom: 4px;
-            color: #555;
-        }
+    .nav-links a {
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      padding: 7px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
 
-        input[type="text"],
-        input[type="number"],
-        textarea {
-            width: 100%;
-            padding: 8px 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-family: Arial, sans-serif;
-        }
+    .nav-links a.active {
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+    }
 
-        input:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #3498db;
-        }
+    /* ── LAYOUT ── */
+    .container {
+      max-width: 1000px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
 
-        textarea {
-            resize: none;
-            height: 60px;
-        }
+    /* ── CARDS ── */
+    .card {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 24px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      margin-bottom: 24px;
+    }
 
-        .check-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 4px;
-        }
+    .card h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-        .check-row input {
-            width: auto;
-        }
+    /* ── FORM ── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
 
-        .check-row label {
-            margin: 0;
-            font-size: 0.9rem;
-        }
+    .form-grid .full { grid-column: span 2; }
 
-        .btn-row {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
+    label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
 
-        button {
-            padding: 9px 20px;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            cursor: pointer;
-        }
+    input[type="text"],
+    input[type="number"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 9px 12px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.92rem;
+      font-family: 'Nunito', sans-serif;
+      color: var(--text);
+      background: #fff;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
 
-        .btn-guardar {
-            background: #3498db;
-            color: #fff;
-        }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
 
-        .btn-guardar:hover {
-            background: #2980b9;
-        }
+    textarea { resize: none; height: 62px; }
 
-        .btn-cancelar {
-            background: #e0e0e0;
-            color: #555;
-            display: none;
-        }
+    /* Fila del select de categoría con botón + */
+    .cat-input-row {
+      display: flex;
+      align-items: stretch;
+      gap: 7px;
+    }
 
-        .btn-cancelar:hover {
-            background: #ccc;
-        }
+    .cat-input-row select { flex: 1; width: auto; }
 
-        /* TABLA */
-        .tabla-card {
-            background: #fff;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
+    .btn-open-cats {
+      width: 40px;
+      min-width: 40px;
+      padding: 0;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.35rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(79,70,229,0.25);
+      transition: background 0.2s, transform 0.1s;
+      flex-shrink: 0;
+    }
 
-        .tabla-card h2 {
-            margin-bottom: 15px;
-            font-size: 1.1rem;
-            color: #2c3e50;
-        }
+    .btn-open-cats:hover { background: var(--primary-dark); }
+    .btn-open-cats:active { transform: scale(0.94); }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.88rem;
-        }
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 4px;
+      padding: 10px 14px;
+      background: var(--bg);
+      border-radius: 8px;
+      border: 2px solid var(--border);
+    }
 
-        th {
-            background: #f8f9fa;
-            padding: 10px;
-            text-align: left;
-            border-bottom: 2px solid #e0e0e0;
-            color: #555;
-        }
+    .check-row input[type="checkbox"] {
+      width: 18px; height: 18px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
 
-        td {
-            padding: 10px;
-            border-bottom: 1px solid #f0f0f0;
-            vertical-align: middle;
-        }
+    .check-row label { margin: 0; font-size: 0.9rem; text-transform: none; letter-spacing: 0; color: var(--text); }
 
-        tr:hover td {
-            background: #fafafa;
-        }
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+    }
 
-        .estado-si {
-            color: #27ae60;
-            font-weight: bold;
-        }
+    button {
+      padding: 10px 22px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.2s, background 0.2s;
+    }
 
-        .estado-no {
-            color: #e74c3c;
-            font-weight: bold;
-        }
+    button:active { transform: scale(0.97); }
 
-        .btn-editar {
-            background: #f39c12;
-            color: #fff;
-            padding: 5px 12px;
-            font-size: 0.8rem;
-            margin-right: 5px;
-        }
+    .btn-guardar  { background: var(--primary); color: #fff; box-shadow: 0 2px 8px rgba(79,70,229,0.3); }
+    .btn-guardar:hover { background: var(--primary-dark); }
 
-        .btn-editar:hover {
-            background: #e67e22;
-        }
+    .btn-cancelar { background: var(--border); color: var(--muted); display: none; }
+    .btn-cancelar:hover { background: #cbd5e1; }
 
-        .btn-eliminar {
-            background: #e74c3c;
-            color: #fff;
-            padding: 5px 12px;
-            font-size: 0.8rem;
-        }
+    /* ── FILTROS ── */
+    .filtros {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
 
-        .btn-eliminar:hover {
-            background: #c0392b;
-        }
+    .filtros select, .filtros input { flex: 1; min-width: 150px; }
 
-        .sin-datos {
-            text-align: center;
-            padding: 30px;
-            color: #aaa;
-        }
-    </style>
+    /* ── TABLA ── */
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+
+    th {
+      background: var(--bg);
+      padding: 11px 12px;
+      text-align: left;
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-bottom: 2px solid var(--border);
+    }
+
+    td { padding: 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #fafbff; }
+
+    .estado-si { background: #d1fae5; color: #065f46; padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; display: inline-block; }
+    .estado-no { background: #fee2e2; color: #991b1b; padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; display: inline-block; }
+    .cat-badge { background: var(--primary-light); color: var(--primary-dark); padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; display: inline-block; }
+
+    .btn-editar   { background: var(--warning); color: #fff; padding: 5px 13px; font-size: 0.8rem; margin-right: 5px; }
+    .btn-editar:hover { background: #d97706; }
+    .btn-eliminar { background: var(--danger); color: #fff; padding: 5px 13px; font-size: 0.8rem; }
+    .btn-eliminar:hover { background: #b91c1c; }
+
+    .sin-datos { text-align: center; padding: 40px; color: #94a3b8; font-size: 1rem; }
+
+    /* ── MODAL CATEGORÍAS ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,0.4);
+      z-index: 300;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(2px);
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: #fff;
+      border-radius: 16px;
+      padding: 22px;
+      width: 400px;
+      max-width: 95vw;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.18);
+      animation: modalIn 0.18s ease;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.95) translateY(-8px); }
+      to   { opacity: 1; transform: scale(1)    translateY(0); }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .modal-header h3 {
+      font-size: 1rem;
+      font-weight: 800;
+    }
+
+    .btn-modal-close {
+      background: var(--bg);
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      transition: background 0.2s;
+    }
+
+    .btn-modal-close:hover { background: var(--border); color: var(--text); }
+
+    .modal-add-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .modal-add-row input { flex: 1; padding: 8px 11px; font-size: 0.88rem; }
+    .modal-add-row button { padding: 8px 16px; font-size: 0.88rem; white-space: nowrap; }
+
+    /* Lista de categorías en modal */
+    .cat-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      max-height: 280px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
+    .cat-list::-webkit-scrollbar { width: 4px; }
+    .cat-list::-webkit-scrollbar-track { background: var(--bg); border-radius: 4px; }
+    .cat-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .cat-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      background: var(--bg);
+      border-radius: 9px;
+      border: 1px solid var(--border);
+    }
+
+    .cat-item-name { flex: 1; font-weight: 700; font-size: 0.9rem; }
+
+    .cat-count {
+      font-size: 0.72rem;
+      color: var(--muted);
+      background: var(--border);
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+
+    .cat-actions { display: flex; gap: 5px; }
+
+    .btn-ce { padding: 4px 10px; font-size: 0.75rem; border-radius: 6px; }
+    .btn-ce.edit { background: var(--warning); color: #fff; }
+    .btn-ce.edit:hover { background: #d97706; }
+    .btn-ce.del  { background: var(--danger);  color: #fff; }
+    .btn-ce.del:hover  { background: #b91c1c; }
+    .btn-ce.save { background: var(--success); color: #fff; }
+    .btn-ce.save:hover { background: #059669; }
+    .btn-ce.cancel { background: var(--border); color: var(--muted); }
+
+    .cat-edit-row { display: flex; gap: 6px; flex: 1; }
+    .cat-edit-row input { flex: 1; padding: 4px 8px; font-size: 0.85rem; }
+
+    .cat-empty { text-align: center; color: var(--muted); padding: 24px 0; font-size: 0.88rem; }
+  </style>
 </head>
-
 <body>
 
-    <div class="container">
-        <h1>📦 Gestión de Productos</h1>
+<!-- NAVBAR -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-brand">
+      <span class="icon">📦</span> StockManager
+    </a>
+    <div class="nav-links">
+      <a href="#" class="active">📋 Productos</a>
+    </div>
+  </div>
+</nav>
 
-        <!-- FORMULARIO -->
-        <div class="form-card">
-            <h2 id="form-titulo">Agregar Producto</h2>
-
-            <input type="hidden" id="edit-id">
-
-            <div class="form-grid">
-                <div>
-                    <label>Nombre</label>
-                    <input type="text" id="inp-nombre" placeholder="Nombre del producto">
-                </div>
-                <div>
-                    <label>Precio ($)</label>
-                    <input type="number" id="inp-precio" placeholder="0.00" min="0" step="0.01">
-                </div>
-                <div>
-                    <label>Stock</label>
-                    <input type="number" id="inp-stock" placeholder="0" min="0">
-                </div>
-                <div>
-                    <label>Descripción</label>
-                    <textarea id="inp-descripcion" placeholder="Descripción breve..."></textarea>
-                </div>
-            </div>
-
-            <div class="check-row" style="margin-top: 12px;">
-                <input type="checkbox" id="inp-disponible" checked>
-                <label for="inp-disponible">Disponible</label>
-            </div>
-
-            <div class="btn-row">
-                <button class="btn-guardar" onclick="guardar()">Guardar</button>
-                <button class="btn-cancelar" id="btn-cancelar" onclick="cancelar()">Cancelar</button>
-            </div>
-        </div>
-
-        <!-- TABLA -->
-        <div class="tabla-card">
-            <h2>Lista de Productos (<span id="total">0</span>)</h2>
-            <div id="tabla-container"></div>
-        </div>
+<!-- MODAL CATEGORÍAS -->
+<div class="modal-overlay" id="modal-cats" onclick="clickOverlay(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>🏷️ Categorías</h3>
+      <button class="btn-modal-close" onclick="cerrarModal()">✕</button>
     </div>
 
-    <script src="app.js"></script>
-</body>
+    <div class="modal-add-row">
+      <input type="text" id="inp-nueva-cat" placeholder="Nombre de nueva categoría..."
+             onkeydown="if(event.key==='Enter') agregarCategoria()">
+      <button class="btn-guardar" onclick="agregarCategoria()">+ Agregar</button>
+    </div>
 
+    <div class="cat-list" id="lista-categorias"></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="container">
+
+  <!-- FORM PRODUCTO -->
+  <div class="card">
+    <h2>✏️ <span id="form-titulo">Agregar Producto</span></h2>
+
+    <div class="form-grid">
+      <div>
+        <label>Nombre</label>
+        <input type="text" id="inp-nombre" placeholder="Nombre del producto">
+      </div>
+
+      <div>
+        <label>Categoría</label>
+        <div class="cat-input-row">
+          <select id="inp-categoria">
+            <option value="">— Sin categoría —</option>
+          </select>
+          <button class="btn-open-cats" onclick="abrirModal()" title="Gestionar categorías">＋</button>
+        </div>
+      </div>
+
+      <div>
+        <label>Precio ($)</label>
+        <input type="number" id="inp-precio" placeholder="0.00" min="0" step="0.01">
+      </div>
+      <div>
+        <label>Stock</label>
+        <input type="number" id="inp-stock" placeholder="0" min="0">
+      </div>
+      <div class="full">
+        <label>Descripción</label>
+        <textarea id="inp-descripcion" placeholder="Descripción breve del producto..."></textarea>
+      </div>
+    </div>
+
+    <div class="check-row" style="margin-top:12px; max-width:220px;">
+      <input type="checkbox" id="inp-disponible" checked>
+      <label for="inp-disponible">Disponible para venta</label>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-guardar" onclick="guardar()">💾 Guardar</button>
+      <button class="btn-cancelar" id="btn-cancelar" onclick="cancelar()">✕ Cancelar</button>
+    </div>
+  </div>
+
+  <!-- TABLA -->
+  <div class="card">
+    <h2>📋 Lista de Productos (<span id="total">0</span>)</h2>
+
+    <div class="filtros">
+      <input type="text" id="filtro-buscar" placeholder="🔍 Buscar producto..." oninput="renderTabla()">
+      <select id="filtro-categoria" onchange="renderTabla()">
+        <option value="">Todas las categorías</option>
+      </select>
+      <select id="filtro-disponible" onchange="renderTabla()">
+        <option value="">Todos los estados</option>
+        <option value="true">✅ Disponibles</option>
+        <option value="false">❌ No disponibles</option>
+      </select>
+    </div>
+
+    <div id="tabla-container"></div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="app.js"></script>
+</body>
 </html>
