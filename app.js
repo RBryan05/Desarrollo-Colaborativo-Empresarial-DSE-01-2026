@@ -25,13 +25,11 @@ let editandoId = null;
 
 // ── NAVEGACIÓN (SPA) ──
 function mostrarSeccion(id) {
-  // Secciones
   document.getElementById("seccion-form").style.display =
     id === "seccion-form" ? "block" : "none";
   document.getElementById("seccion-tabla").style.display =
     id === "seccion-tabla" ? "block" : "none";
 
-  // Links de Navbar
   document
     .getElementById("link-form")
     .classList.toggle("active", id === "seccion-form");
@@ -173,15 +171,26 @@ function cerrarModal() {
 
 function renderCatLista() {
   const lista = document.getElementById("lista-categorias");
+
+  if (categorias.length === 0) {
+    lista.innerHTML =
+      '<p class="cat-empty">No hay categorías. ¡Crea la primera!</p>';
+    return;
+  }
+
   lista.innerHTML = categorias
-    .map(
-      (c, i) => `
-    <div class="cat-item">
-      <span>${c}</span>
-      <button onclick="categorias.splice(${i},1); renderCatLista(); sincronizarSelects();" style="color:red; background:none;">✕</button>
-    </div>
-  `,
-    )
+    .map((c, i) => {
+      const count = productos.filter((p) => p.categoria === c).length;
+      return `
+      <div class="cat-item" id="cat-item-${i}">
+        <span class="cat-item-name" id="cat-name-${i}">${c}</span>
+        <span class="cat-count">${count} prod.</span>
+        <div class="cat-actions">
+          <button class="btn-ce edit" onclick="iniciarEditCat(${i})"><i class="bi bi-pencil-square"></i></button>
+          <button class="btn-ce del"  onclick="eliminarCategoria('${c}')"><i class="bi bi-trash3"></i></button>
+        </div>
+      </div>`;
+    })
     .join("");
 }
 
@@ -193,6 +202,104 @@ function agregarCategoria() {
     renderCatLista();
     sincronizarSelects();
   }
+}
+
+function iniciarEditCat(i) {
+  const item = document.getElementById(`cat-item-${i}`);
+  const nombre = categorias[i];
+
+  item.innerHTML = `
+    <div class="cat-edit-row">
+      <input type="text" id="cat-edit-inp-${i}" value="${nombre}"
+             onkeydown="if(event.key==='Enter') guardarEditCat(${i}); if(event.key==='Escape') renderCatLista();">
+    </div>
+    <div class="cat-actions">
+      <button class="btn-ce save"   onclick="guardarEditCat(${i})"><i class="bi bi-check2"></i></button>
+      <button class="btn-ce cancel" onclick="renderCatLista()"><i class="bi bi-x-lg"></i></button>
+    </div>`;
+
+  document.getElementById(`cat-edit-inp-${i}`).focus();
+}
+
+function guardarEditCat(i) {
+  const inp = document.getElementById(`cat-edit-inp-${i}`);
+  const nuevo = inp.value.trim();
+  const anterior = categorias[i];
+
+  if (!nuevo) {
+    Swal.fire({
+      icon: "warning",
+      title: "Campo vacío",
+      text: "El nombre no puede estar vacío.",
+      confirmButtonColor: "#4f46e5",
+    });
+    return;
+  }
+
+  const duplicado = categorias.some(
+    (c, idx) => idx !== i && c.toLowerCase() === nuevo.toLowerCase(),
+  );
+  if (duplicado) {
+    Swal.fire({
+      icon: "info",
+      title: "Ya existe",
+      text: `"${nuevo}" ya está registrada.`,
+      confirmButtonColor: "#4f46e5",
+    });
+    return;
+  }
+
+  productos.forEach((p) => {
+    if (p.categoria === anterior) p.categoria = nuevo;
+  });
+  categorias[i] = nuevo;
+
+  renderCatLista();
+  sincronizarSelects();
+  renderTabla();
+
+  Swal.fire({
+    icon: "success",
+    title: "Actualizada",
+    text: `Renombrada a "${nuevo}".`,
+    timer: 1400,
+    showConfirmButton: false,
+  });
+}
+
+// ── ELIMINAR CATEGORÍA (añadida) ──
+function eliminarCategoria(nombre) {
+  const count = productos.filter((p) => p.categoria === nombre).length;
+  const aviso =
+    count > 0
+      ? `<br><small style="color:#ef4444;">⚠️ ${count} producto(s) quedarán sin categoría.</small>`
+      : "";
+
+  Swal.fire({
+    title: "¿Eliminar categoría?",
+    html: `<b>${nombre}</b>${aviso}`,
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#ef4444",
+    cancelButtonColor: "#94a3b8",
+    confirmButtonText: "Sí, eliminar",
+    cancelButtonText: "Cancelar",
+  }).then((result) => {
+    if (!result.isConfirmed) return;
+    productos.forEach((p) => {
+      if (p.categoria === nombre) p.categoria = "";
+    });
+    categorias = categorias.filter((c) => c !== nombre);
+    renderCatLista();
+    sincronizarSelects();
+    renderTabla();
+    Swal.fire({
+      icon: "success",
+      title: "Eliminada",
+      timer: 1400,
+      showConfirmButton: false,
+    });
+  });
 }
 
 function sincronizarSelects() {
