@@ -1,8 +1,24 @@
 // ── DATOS INICIALES ──
 let categorias = ["Electrónica", "Periféricos", "Accesorios"];
 let productos = [
-  { id: 1, nombre: "Laptop Dell", descripcion: "Intel i7, 16GB RAM", precio: 1200, stock: 5, disponible: true, categoria: "Electrónica" },
-  { id: 2, nombre: "Mouse Logitech", descripcion: "Inalámbrico", precio: 45, stock: 15, disponible: true, categoria: "Periféricos" }
+  {
+    id: 1,
+    nombre: "Laptop Dell",
+    descripcion: "Intel i7, 16GB RAM",
+    precio: 1200,
+    stock: 5,
+    disponible: true,
+    categoria: "Electrónica",
+  },
+  {
+    id: 2,
+    nombre: "Mouse Logitech",
+    descripcion: "Inalámbrico",
+    precio: 45,
+    stock: 15,
+    disponible: true,
+    categoria: "Periféricos",
+  },
 ];
 let nextId = 3;
 let editandoId = null;
@@ -10,14 +26,20 @@ let editandoId = null;
 // ── NAVEGACIÓN (SPA) ──
 function mostrarSeccion(id) {
   // Secciones
-  document.getElementById('seccion-form').style.display = (id === 'seccion-form') ? 'block' : 'none';
-  document.getElementById('seccion-tabla').style.display = (id === 'seccion-tabla') ? 'block' : 'none';
-  
-  // Links de Navbar
-  document.getElementById('link-form').classList.toggle('active', id === 'seccion-form');
-  document.getElementById('link-tabla').classList.toggle('active', id === 'seccion-tabla');
+  document.getElementById("seccion-form").style.display =
+    id === "seccion-form" ? "block" : "none";
+  document.getElementById("seccion-tabla").style.display =
+    id === "seccion-tabla" ? "block" : "none";
 
-  if(id === 'seccion-tabla') renderTabla();
+  // Links de Navbar
+  document
+    .getElementById("link-form")
+    .classList.toggle("active", id === "seccion-form");
+  document
+    .getElementById("link-tabla")
+    .classList.toggle("active", id === "seccion-tabla");
+
+  if (id === "seccion-tabla") renderTabla();
 }
 
 // ── CRUD PRODUCTOS ──
@@ -30,26 +52,42 @@ function guardar() {
   const disponible = document.getElementById("inp-disponible").checked;
 
   if (!nombre || isNaN(precio) || isNaN(stock)) {
-    Swal.fire('Error', 'Completa los campos obligatorios', 'error');
+    Swal.fire("Error", "Completa los campos obligatorios", "error");
     return;
   }
 
   if (editandoId !== null) {
-    const idx = productos.findIndex(p => p.id === editandoId);
-    productos[idx] = { id: editandoId, nombre, descripcion, precio, stock, disponible, categoria };
+    const idx = productos.findIndex((p) => p.id === editandoId);
+    productos[idx] = {
+      id: editandoId,
+      nombre,
+      descripcion,
+      precio,
+      stock,
+      disponible,
+      categoria,
+    };
     editandoId = null;
-    Swal.fire('¡Éxito!', 'Producto actualizado', 'success');
+    Swal.fire("¡Éxito!", "Producto actualizado", "success");
   } else {
-    productos.push({ id: nextId++, nombre, descripcion, precio, stock, disponible, categoria });
-    Swal.fire('¡Éxito!', 'Producto agregado', 'success');
+    productos.push({
+      id: nextId++,
+      nombre,
+      descripcion,
+      precio,
+      stock,
+      disponible,
+      categoria,
+    });
+    Swal.fire("¡Éxito!", "Producto agregado", "success");
   }
 
   limpiarFormulario();
-  mostrarSeccion('seccion-tabla');
+  mostrarSeccion("seccion-tabla");
 }
 
 function editar(id) {
-  const p = productos.find(p => p.id === id);
+  const p = productos.find((p) => p.id === id);
   if (!p) return;
 
   editandoId = id;
@@ -62,23 +100,23 @@ function editar(id) {
 
   document.getElementById("form-titulo").innerText = "Editar Producto";
   document.getElementById("btn-cancelar").style.display = "inline-block";
-  
-  mostrarSeccion('seccion-form');
+
+  mostrarSeccion("seccion-form");
 }
 
 function eliminar(id) {
   Swal.fire({
-    title: '¿Estás seguro?',
+    title: "¿Estás seguro?",
     text: "No podrás revertir esto",
-    icon: 'warning',
+    icon: "warning",
     showCancelButton: true,
-    confirmButtonColor: '#ef4444',
-    confirmButtonText: 'Sí, eliminar'
+    confirmButtonColor: "#ef4444",
+    confirmButtonText: "Sí, eliminar",
   }).then((result) => {
     if (result.isConfirmed) {
-      productos = productos.filter(p => p.id !== id);
+      productos = productos.filter((p) => p.id !== id);
       renderTabla();
-      Swal.fire('Eliminado', 'El producto ha sido borrado', 'success');
+      Swal.fire("Eliminado", "El producto ha sido borrado", "success");
     }
   });
 }
@@ -90,7 +128,7 @@ function renderTabla() {
   const fCat = document.getElementById("filtro-categoria").value;
   const fDisp = document.getElementById("filtro-disponible").value;
 
-  const filtrados = productos.filter(p => {
+  const filtrados = productos.filter((p) => {
     const matchBusca = p.nombre.toLowerCase().includes(buscar);
     const matchCat = !fCat || p.categoria === fCat;
     const matchDisp = fDisp === "" || String(p.disponible) === fDisp;
@@ -100,39 +138,51 @@ function renderTabla() {
   document.getElementById("total").innerText = filtrados.length;
 
   let html = `<table><thead><tr><th>ID</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>`;
-  
-  filtrados.forEach(p => {
+
+  filtrados.forEach((p) => {
     html += `
       <tr>
         <td>#${p.id}</td>
         <td><strong>${p.nombre}</strong></td>
-        <td><span class="cat-badge">${p.categoria || 'Sin cat.'}</span></td>
+        <td><span class="cat-badge">${p.categoria || "Sin cat."}</span></td>
         <td>$${p.precio.toFixed(2)}</td>
         <td>${p.stock}</td>
-        <td><span class="${p.disponible ? 'estado-si' : 'estado-no'}">${p.disponible ? 'Disponible' : 'Agotado'}</span></td>
+        <td><span class="${p.disponible ? "estado-si" : "estado-no"}">${p.disponible ? "Disponible" : "Agotado"}</span></td>
         <td>
-          <button style="background:var(--warning); color:#fff;" onclick="editar(${p.id})">✏️</button>
-          <button style="background:var(--danger); color:#fff;" onclick="eliminar(${p.id})">🗑️</button>
+          <button style="background:var(--warning); color:#fff;" onclick="editar(${p.id})"><i class="bi bi-pencil-square"></i></button>
+          <button style="background:var(--danger); color:#fff;" onclick="eliminar(${p.id})"><i class="bi bi-trash"></i></button>
         </td>
       </tr>`;
   });
 
   html += `</tbody></table>`;
-  container.innerHTML = filtrados.length > 0 ? html : '<p style="text-align:center; padding:20px;">No hay productos.</p>';
+  container.innerHTML =
+    filtrados.length > 0
+      ? html
+      : '<p style="text-align:center; padding:20px;">No hay productos.</p>';
 }
 
 // ── CATEGORÍAS ──
-function abrirModal() { document.getElementById("modal-cats").classList.add("open"); renderCatLista(); }
-function cerrarModal() { document.getElementById("modal-cats").classList.remove("open"); }
+function abrirModal() {
+  document.getElementById("modal-cats").classList.add("open");
+  renderCatLista();
+}
+function cerrarModal() {
+  document.getElementById("modal-cats").classList.remove("open");
+}
 
 function renderCatLista() {
   const lista = document.getElementById("lista-categorias");
-  lista.innerHTML = categorias.map((c, i) => `
+  lista.innerHTML = categorias
+    .map(
+      (c, i) => `
     <div class="cat-item">
       <span>${c}</span>
       <button onclick="categorias.splice(${i},1); renderCatLista(); sincronizarSelects();" style="color:red; background:none;">✕</button>
     </div>
-  `).join('');
+  `,
+    )
+    .join("");
 }
 
 function agregarCategoria() {
@@ -146,10 +196,18 @@ function agregarCategoria() {
 }
 
 function sincronizarSelects() {
-  const selects = [document.getElementById("inp-categoria"), document.getElementById("filtro-categoria")];
+  const selects = [
+    document.getElementById("inp-categoria"),
+    document.getElementById("filtro-categoria"),
+  ];
   selects.forEach((sel, i) => {
-    const placeholder = i === 0 ? '<option value="">— Seleccionar —</option>' : '<option value="">Todas las categorías</option>';
-    sel.innerHTML = placeholder + categorias.map(c => `<option value="${c}">${c}</option>`).join('');
+    const placeholder =
+      i === 0
+        ? '<option value="">— Seleccionar —</option>'
+        : '<option value="">Todas las categorías</option>';
+    sel.innerHTML =
+      placeholder +
+      categorias.map((c) => `<option value="${c}">${c}</option>`).join("");
   });
 }
 
@@ -165,7 +223,7 @@ function limpiarFormulario() {
 function cancelar() {
   limpiarFormulario();
   editandoId = null;
-  mostrarSeccion('seccion-tabla');
+  mostrarSeccion("seccion-tabla");
 }
 
 // INICIO
