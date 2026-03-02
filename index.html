@@ -1,266 +1,93 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUD Productos</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        body {
-            font-family: Arial, sans-serif;
-            background: #f0f2f5;
-            padding: 30px;
-            color: #333;
-        }
+<title>CRUD Productos</title>
 
-        h1 {
-            text-align: center;
-            margin-bottom: 25px;
-            color: #2c3e50;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
+<!-- FONT AWESOME -->
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-        /* FORMULARIO */
-        .form-card {
-            background: #fff;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
-        .form-card h2 {
-            margin-bottom: 15px;
-            font-size: 1.1rem;
-            color: #2c3e50;
-        }
+<style>
+body{font-family:Nunito;background:#f1f5f9;margin:0}
+.container{max-width:1000px;margin:30px auto;padding:0 20px}
+.card{background:#fff;border-radius:14px;padding:24px;margin-bottom:24px}
+.btn-guardar{background:#4f46e5;color:#fff;border:none;padding:10px 20px;border-radius:8px}
+.btn-editar{background:#f59e0b;color:#fff;border:none;padding:5px 13px}
+.btn-eliminar{background:#ef4444;color:#fff;border:none;padding:5px 13px}
+.cat-badge{background:#e0e7ff;color:#3730a3;padding:3px 10px;border-radius:20px}
+.estado-si{background:#d1fae5;color:#065f46;padding:3px 10px;border-radius:20px}
+.estado-no{background:#fee2e2;color:#991b1b;padding:3px 10px;border-radius:20px}
+.sin-datos{text-align:center;padding:40px;color:#94a3b8}
+</style>
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .form-grid .full {
-            grid-column: span 2;
-        }
-
-        label {
-            display: block;
-            font-size: 0.85rem;
-            margin-bottom: 4px;
-            color: #555;
-        }
-
-        input[type="text"],
-        input[type="number"],
-        textarea {
-            width: 100%;
-            padding: 8px 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-family: Arial, sans-serif;
-        }
-
-        input:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #3498db;
-        }
-
-        textarea {
-            resize: none;
-            height: 60px;
-        }
-
-        .check-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 4px;
-        }
-
-        .check-row input {
-            width: auto;
-        }
-
-        .check-row label {
-            margin: 0;
-            font-size: 0.9rem;
-        }
-
-        .btn-row {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        button {
-            padding: 9px 20px;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            cursor: pointer;
-        }
-
-        .btn-guardar {
-            background: #3498db;
-            color: #fff;
-        }
-
-        .btn-guardar:hover {
-            background: #2980b9;
-        }
-
-        .btn-cancelar {
-            background: #e0e0e0;
-            color: #555;
-            display: none;
-        }
-
-        .btn-cancelar:hover {
-            background: #ccc;
-        }
-
-        /* TABLA */
-        .tabla-card {
-            background: #fff;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .tabla-card h2 {
-            margin-bottom: 15px;
-            font-size: 1.1rem;
-            color: #2c3e50;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.88rem;
-        }
-
-        th {
-            background: #f8f9fa;
-            padding: 10px;
-            text-align: left;
-            border-bottom: 2px solid #e0e0e0;
-            color: #555;
-        }
-
-        td {
-            padding: 10px;
-            border-bottom: 1px solid #f0f0f0;
-            vertical-align: middle;
-        }
-
-        tr:hover td {
-            background: #fafafa;
-        }
-
-        .estado-si {
-            color: #27ae60;
-            font-weight: bold;
-        }
-
-        .estado-no {
-            color: #e74c3c;
-            font-weight: bold;
-        }
-
-        .btn-editar {
-            background: #f39c12;
-            color: #fff;
-            padding: 5px 12px;
-            font-size: 0.8rem;
-            margin-right: 5px;
-        }
-
-        .btn-editar:hover {
-            background: #e67e22;
-        }
-
-        .btn-eliminar {
-            background: #e74c3c;
-            color: #fff;
-            padding: 5px 12px;
-            font-size: 0.8rem;
-        }
-
-        .btn-eliminar:hover {
-            background: #c0392b;
-        }
-
-        .sin-datos {
-            text-align: center;
-            padding: 30px;
-            color: #aaa;
-        }
-    </style>
 </head>
-
 <body>
 
-    <div class="container">
-        <h1>📦 Gestión de Productos</h1>
+<div class="container">
 
-        <!-- FORMULARIO -->
-        <div class="form-card">
-            <h2 id="form-titulo">Agregar Producto</h2>
+<div class="card">
+<h2>
+<i class="fa-solid fa-pen-to-square"></i>
+<span id="form-titulo">Agregar Producto</span>
+</h2>
 
-            <input type="hidden" id="edit-id">
+<input id="inp-nombre" placeholder="Nombre"><br><br>
+<input id="inp-descripcion" placeholder="Descripción"><br><br>
+<input id="inp-precio" type="number" placeholder="Precio"><br><br>
+<input id="inp-stock" type="number" placeholder="Stock"><br><br>
 
-            <div class="form-grid">
-                <div>
-                    <label>Nombre</label>
-                    <input type="text" id="inp-nombre" placeholder="Nombre del producto">
-                </div>
-                <div>
-                    <label>Precio ($)</label>
-                    <input type="number" id="inp-precio" placeholder="0.00" min="0" step="0.01">
-                </div>
-                <div>
-                    <label>Stock</label>
-                    <input type="number" id="inp-stock" placeholder="0" min="0">
-                </div>
-                <div>
-                    <label>Descripción</label>
-                    <textarea id="inp-descripcion" placeholder="Descripción breve..."></textarea>
-                </div>
-            </div>
+<select id="inp-categoria"></select><br><br>
 
-            <div class="check-row" style="margin-top: 12px;">
-                <input type="checkbox" id="inp-disponible" checked>
-                <label for="inp-disponible">Disponible</label>
-            </div>
+<label>
+<input type="checkbox" id="inp-disponible" checked>
+Disponible
+</label><br><br>
 
-            <div class="btn-row">
-                <button class="btn-guardar" onclick="guardar()">Guardar</button>
-                <button class="btn-cancelar" id="btn-cancelar" onclick="cancelar()">Cancelar</button>
-            </div>
-        </div>
+<button class="btn-guardar" onclick="guardar()">
+<i class="fa-solid fa-floppy-disk"></i> Guardar
+</button>
 
-        <!-- TABLA -->
-        <div class="tabla-card">
-            <h2>Lista de Productos (<span id="total">0</span>)</h2>
-            <div id="tabla-container"></div>
-        </div>
-    </div>
+<button id="btn-cancelar" onclick="cancelar()" style="display:none">
+<i class="fa-solid fa-xmark"></i> Cancelar
+</button>
 
-    <script src="app.js"></script>
+</div>
+
+<div class="card">
+
+<h2>
+<i class="fa-solid fa-clipboard-list"></i>
+Lista de Productos (<span id="total">0</span>)
+</h2>
+
+<input id="filtro-buscar" placeholder="Buscar" oninput="renderTabla()"><br><br>
+
+<select id="filtro-categoria" onchange="renderTabla()"></select>
+
+<select id="filtro-disponible" onchange="renderTabla()">
+<option value="">Todos</option>
+<option value="true">Disponibles</option>
+<option value="false">No disponibles</option>
+</select>
+
+<br><br>
+
+<div id="tabla-container"></div>
+
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="app.js"></script>
+
 </body>
-
 </html>
