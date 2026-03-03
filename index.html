@@ -11,7 +11,6 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <style>
-    /* ── TUS ESTILOS BASE ── */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -39,7 +38,6 @@
       min-height: 100vh;
     }
 
-    /* ── NAVBAR ── */
     nav {
       background: var(--primary);
       box-shadow: 0 4px 20px rgba(79, 70, 229, 0.3);
@@ -90,7 +88,6 @@
       color: #fff !important;
     }
 
-    /* ── CONTENEDORES ── */
     .container {
       max-width: 1000px;
       margin: 30px auto;
@@ -116,7 +113,6 @@
       gap: 8px;
     }
 
-    /* ── FORM Y TABLA (ESTILOS ORIGINALES) ── */
     .form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -159,6 +155,7 @@
       border-radius: 8px;
       cursor: pointer;
       font-size: 1.2rem;
+      flex-shrink: 0;
     }
 
     .btn-row {
@@ -187,7 +184,6 @@
       display: none;
     }
 
-    /* Filtros y Tabla */
     .filtros {
       display: flex;
       gap: 10px;
@@ -244,7 +240,7 @@
       font-weight: 700;
     }
 
-    /* Modal */
+    /* Modal — renombrado a modal-box para evitar conflicto con Bootstrap */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -260,7 +256,7 @@
       display: flex;
     }
 
-    .modal {
+    .modal-box {
       background: #fff;
       padding: 20px;
       border-radius: 15px;
@@ -331,7 +327,8 @@
       <div class="btn-row">
         <button class="btn-guardar btn btn-primary" onclick="guardar()"><i class="bi bi-floppy-fill"></i> Guardar
           Producto</button>
-        <button id="btn-cancelar" class="btn-cancelar btn btn-secondary" onclick="cancelar()">✕ Cancelar</button>
+        <button id="btn-cancelar" class="btn-cancelar btn btn-secondary" onclick="cancelar()"><i class="bi bi-x-lg"></i>
+          Cancelar</button>
       </div>
     </div>
 
@@ -353,11 +350,11 @@
 
   <!-- MODAL CATEGORÍAS -->
   <div class="modal-overlay" id="modal-cats" onclick="if(event.target===this) cerrarModal()">
-    <div class="modal">
-      <h3>🏷️ Gestionar Categorías</h3>
+    <div class="modal-box">
+      <h3><i class="bi bi-tags-fill"></i> Gestionar Categorías</h3>
       <div class="cat-input-row" style="margin: 15px 0;">
         <input type="text" id="inp-nueva-cat" class="form-control" placeholder="Nueva categoría...">
-        <button class="btn-guardar btn btn-primary" onclick="agregarCategoria()">+</button>
+        <button class="btn-guardar btn btn-primary" onclick="agregarCategoria()"><i class="bi bi-plus"></i></button>
       </div>
       <div id="lista-categorias"></div>
       <button class="btn btn-secondary w-100 mt-2" onclick="cerrarModal()">Cerrar</button>
