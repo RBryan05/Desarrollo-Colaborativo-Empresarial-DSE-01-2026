@@ -1,371 +1,447 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StockManager - CRUD</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StockManager - CRUD</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+      :root {
+        --primary: #4f46e5;
+        --primary-dark: #3730a3;
+        --primary-light: #e0e7ff;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --success: #10b981;
+        --bg: #f1f5f9;
+        --card: #ffffff;
+        --text: #1e293b;
+        --muted: #64748b;
+        --border: #e2e8f0;
+      }
 
-    :root {
-      --primary: #4f46e5;
-      --primary-dark: #3730a3;
-      --primary-light: #e0e7ff;
-      --danger: #ef4444;
-      --warning: #f59e0b;
-      --success: #10b981;
-      --bg: #f1f5f9;
-      --card: #ffffff;
-      --text: #1e293b;
-      --muted: #64748b;
-      --border: #e2e8f0;
-    }
+      body {
+        font-family: "Nunito", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+      }
 
-    body {
-      font-family: 'Nunito', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-    }
+      nav {
+        background: var(--primary);
+        box-shadow: 0 4px 20px rgba(79, 70, 229, 0.3);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
 
-    nav {
-      background: var(--primary);
-      box-shadow: 0 4px 20px rgba(79, 70, 229, 0.3);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
+      .nav-inner {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 62px;
+      }
 
-    .nav-inner {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 0 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 62px;
-    }
+      .nav-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 800;
+        font-size: 1.2rem;
+        color: #fff;
+        text-decoration: none;
+        cursor: pointer;
+      }
 
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 800;
-      font-size: 1.2rem;
-      color: #fff;
-      text-decoration: none;
-      cursor: pointer;
-    }
+      .nav-links {
+        display: flex;
+        gap: 8px;
+      }
 
-    .nav-links {
-      display: flex;
-      gap: 8px;
-    }
+      .nav-links a {
+        color: rgba(255, 255, 255, 0.7) !important;
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: 0.3s;
+      }
 
-    .nav-links a {
-      color: rgba(0, 0, 0, 0.8);
-      text-decoration: none;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: 0.3s;
-    }
+      .nav-links a.active {
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff !important;
+      }
 
-    .nav-links a.active {
-      background: rgba(255, 255, 255, 0.2);
-      color: #fff !important;
-    }
+      .container {
+        max-width: 1000px;
+        margin: 30px auto;
+        padding: 0 20px;
+      }
 
-    .container {
-      max-width: 1000px;
-      margin: 30px auto;
-      padding: 0 20px;
-    }
+      .card {
+        background: var(--card);
+        border-radius: 14px;
+        padding: 24px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+        margin-bottom: 24px;
+      }
 
-    .card {
-      background: var(--card);
-      border-radius: 14px;
-      padding: 24px;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
-      margin-bottom: 24px;
-    }
+      .card h2 {
+        font-size: 1rem;
+        font-weight: 700;
+        margin-bottom: 18px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
 
-    .card h2 {
-      font-size: 1rem;
-      font-weight: 700;
-      margin-bottom: 18px;
-      padding-bottom: 12px;
-      border-bottom: 2px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
 
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
+      .full {
+        grid-column: span 2;
+      }
 
-    .full {
-      grid-column: span 2;
-    }
+      label {
+        display: block;
+        font-size: 0.82rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+        color: var(--muted);
+        text-transform: uppercase;
+      }
 
-    label {
-      display: block;
-      font-size: 0.82rem;
-      font-weight: 700;
-      margin-bottom: 5px;
-      color: var(--muted);
-      text-transform: uppercase;
-    }
+      input,
+      textarea,
+      select {
+        width: 100%;
+        padding: 9px 12px;
+        border: 2px solid var(--border);
+        border-radius: 8px;
+        font-family: inherit;
+      }
 
-    input,
-    textarea,
-    select {
-      width: 100%;
-      padding: 9px 12px;
-      border: 2px solid var(--border);
-      border-radius: 8px;
-      font-family: inherit;
-    }
+      .cat-input-row {
+        display: flex;
+        gap: 7px;
+      }
 
-    .cat-input-row {
-      display: flex;
-      gap: 7px;
-    }
+      .btn-open-cats {
+        width: 40px;
+        background: var(--primary);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+      }
 
-    .btn-open-cats {
-      width: 40px;
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 1.2rem;
-      flex-shrink: 0;
-    }
+      .btn-row {
+        display: flex;
+        gap: 10px;
+        margin-top: 18px;
+      }
 
-    .btn-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 18px;
-    }
+      button {
+        padding: 10px 22px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s;
+      }
 
-    button {
-      padding: 10px 22px;
-      border: none;
-      border-radius: 8px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: 0.2s;
-    }
+      .btn-guardar {
+        background: var(--primary);
+        color: #fff;
+      }
 
-    .btn-guardar {
-      background: var(--primary);
-      color: #fff;
-    }
+      .btn-cancelar {
+        background: var(--border);
+        color: var(--muted);
+        display: none;
+      }
 
-    .btn-cancelar {
-      background: var(--border);
-      color: var(--muted);
-      display: none;
-    }
+      .filtros {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+      }
 
-    .filtros {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 18px;
-      flex-wrap: wrap;
-    }
+      .filtros > * {
+        flex: 1;
+        min-width: 150px;
+      }
 
-    .filtros>* {
-      flex: 1;
-      min-width: 150px;
-    }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+      }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.88rem;
-    }
+      th {
+        text-align: left;
+        padding: 12px;
+        color: var(--muted);
+        border-bottom: 2px solid var(--border);
+        text-transform: uppercase;
+        font-size: 0.75rem;
+      }
 
-    th {
-      text-align: left;
-      padding: 12px;
-      color: var(--muted);
-      border-bottom: 2px solid var(--border);
-      text-transform: uppercase;
-      font-size: 0.75rem;
-    }
+      td {
+        padding: 12px;
+        border-bottom: 1px solid var(--border);
+      }
 
-    td {
-      padding: 12px;
-      border-bottom: 1px solid var(--border);
-    }
+      .estado-si {
+        background: #d1fae5;
+        color: #065f46;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-weight: 700;
+      }
 
-    .estado-si {
-      background: #d1fae5;
-      color: #065f46;
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-weight: 700;
-    }
+      .estado-no {
+        background: #fee2e2;
+        color: #991b1b;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-weight: 700;
+      }
 
-    .estado-no {
-      background: #fee2e2;
-      color: #991b1b;
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-weight: 700;
-    }
+      .cat-badge {
+        background: var(--primary-light);
+        color: var(--primary-dark);
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-weight: 700;
+      }
 
-    .cat-badge {
-      background: var(--primary-light);
-      color: var(--primary-dark);
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-weight: 700;
-    }
+      /* Modal — renombrado a modal-box para evitar conflicto con Bootstrap */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 300;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(2px);
+      }
 
-    /* Modal — renombrado a modal-box para evitar conflicto con Bootstrap */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 300;
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(2px);
-    }
+      .modal-overlay.open {
+        display: flex;
+      }
 
-    .modal-overlay.open {
-      display: flex;
-    }
+      .modal-box {
+        background: #fff;
+        padding: 20px;
+        border-radius: 15px;
+        width: 400px;
+      }
 
-    .modal-box {
-      background: #fff;
-      padding: 20px;
-      border-radius: 15px;
-      width: 400px;
-    }
+      .cat-item {
+        display: flex;
+        justify-content: space-between;
+        background: var(--bg);
+        padding: 8px;
+        margin-bottom: 5px;
+        border-radius: 8px;
+      }
+    </style>
+  </head>
 
-    .cat-item {
-      display: flex;
-      justify-content: space-between;
-      background: var(--bg);
-      padding: 8px;
-      margin-bottom: 5px;
-      border-radius: 8px;
-    }
-  </style>
-</head>
-
-<body>
-
-  <nav>
-    <div class="nav-inner">
-      <div class="nav-brand" onclick="mostrarSeccion('seccion-tabla')">
-        <span><i class="bi bi-box-seam-fill"></i></span> StockManager
-      </div>
-      <div class="nav-links">
-        <a id="link-tabla" class="active" onclick="mostrarSeccion('seccion-tabla')"><i class="bi bi-box-seam"></i>
-          Inventario</a>
-        <a id="link-form" onclick="mostrarSeccion('seccion-form')"><i class="bi bi-plus-square"></i> Nuevo Producto</a>
-      </div>
-    </div>
-  </nav>
-
-  <div class="container">
-    <!-- FORMULARIO -->
-    <div id="seccion-form" class="card" style="display: none;">
-      <h2><i class="bi bi-plus-circle"></i> <span id="form-titulo">Agregar Producto</span></h2>
-      <div class="form-grid">
-        <div>
-          <label for="inp-nombre">Nombre</label>
-          <input type="text" id="inp-nombre" class="form-control">
+  <body>
+    <nav>
+      <div class="nav-inner">
+        <div class="nav-brand" onclick="mostrarSeccion('seccion-tabla')">
+          <span><i class="bi bi-box-seam-fill"></i></span> StockManager
         </div>
-        <div>
-          <label>Categoría</label>
-          <div class="cat-input-row ml-5">
-            <select id="inp-categoria" class="form-select"></select>
-            <button class="btn-open-cats d-flex align-items-center justify-content-center" onclick="abrirModal()">
-              <i class="bi bi-plus-circle"></i>
-            </button>
+        <div class="nav-links">
+          <a
+            id="link-tabla"
+            class="active"
+            onclick="mostrarSeccion('seccion-tabla')"
+            ><i class="bi bi-box-seam"></i> Inventario</a
+          >
+          <a id="link-form" onclick="mostrarSeccion('seccion-form')"
+            ><i class="bi bi-plus-square"></i> Nuevo Producto</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <!-- FORMULARIO -->
+      <div id="seccion-form" class="card" style="display: none">
+        <h2>
+          <i id="form-icono" class="bi bi-plus-circle"></i>
+          <span id="form-titulo">Agregar Producto</span>
+        </h2>
+        <div class="form-grid">
+          <div>
+            <label for="inp-nombre">Nombre</label>
+            <input type="text" id="inp-nombre" class="form-control" />
+          </div>
+          <div>
+            <label>Categoría</label>
+            <div class="cat-input-row ml-5">
+              <select id="inp-categoria" class="form-select"></select>
+              <button
+                class="btn-open-cats d-flex align-items-center justify-content-center"
+                onclick="abrirModal()"
+              >
+                <i class="bi bi-plus-circle"></i>
+              </button>
+            </div>
+          </div>
+          <div>
+            <label for="inp-precio">Precio ($)</label>
+            <input
+              type="number"
+              id="inp-precio"
+              class="form-control"
+              step="0.01"
+            />
+          </div>
+          <div>
+            <label for="inp-stock">Stock</label>
+            <input type="number" id="inp-stock" class="form-control" />
+          </div>
+          <div class="full">
+            <label for="inp-descripcion">Descripción</label>
+            <textarea id="inp-descripcion" class="form-control"></textarea>
           </div>
         </div>
-        <div>
-          <label for="inp-precio">Precio ($)</label>
-          <input type="number" id="inp-precio" class="form-control" step="0.01">
+        <div class="d-flex align-items-center gap-2 mt-3">
+          <input
+            type="checkbox"
+            id="inp-disponible"
+            class="form-check-input m-0"
+            checked
+          />
+          <label class="form-check-label m-0" for="inp-disponible"
+            >Disponible</label
+          >
         </div>
-        <div>
-          <label for="inp-stock">Stock</label>
-          <input type="number" id="inp-stock" class="form-control">
-        </div>
-        <div class="full">
-          <label for="inp-descripcion">Descripción</label>
-          <textarea id="inp-descripcion" class="form-control"></textarea>
+        <div class="btn-row">
+          <button class="btn-guardar btn btn-primary" onclick="guardar()">
+            <i class="bi bi-floppy-fill"></i> Guardar Producto
+          </button>
+          <button
+            id="btn-cancelar"
+            class="btn-cancelar btn btn-secondary"
+            onclick="cancelar()"
+          >
+            <i class="bi bi-x-lg"></i> Cancelar
+          </button>
         </div>
       </div>
-      <div class="d-flex align-items-center gap-2 mt-3">
-        <input type="checkbox" id="inp-disponible" class="form-check-input m-0" checked>
-        <label class="form-check-label m-0" for="inp-disponible">Disponible</label>
-      </div>
-      <div class="btn-row">
-        <button class="btn-guardar btn btn-primary" onclick="guardar()"><i class="bi bi-floppy-fill"></i> Guardar
-          Producto</button>
-        <button id="btn-cancelar" class="btn-cancelar btn btn-secondary" onclick="cancelar()"><i class="bi bi-x-lg"></i>
-          Cancelar</button>
+
+      <!-- TABLA -->
+      <div id="seccion-tabla" class="card">
+        <h2>
+          <i class="bi bi-list-check"></i> Lista de Productos (<span id="total"
+            >0</span
+          >)
+        </h2>
+        <div class="filtros">
+          <input
+            type="text"
+            id="filtro-buscar"
+            class="form-control"
+            placeholder="Buscar..."
+            oninput="renderTabla()"
+          />
+          <select
+            id="filtro-categoria"
+            class="form-select"
+            onchange="renderTabla()"
+          ></select>
+          <select
+            id="filtro-disponible"
+            class="form-select"
+            onchange="renderTabla()"
+          >
+            <option value="">Todos los estados</option>
+            <option value="true">Disponibles</option>
+            <option value="false">No disponibles</option>
+          </select>
+        </div>
+        <div id="tabla-container" class="table-responsive"></div>
       </div>
     </div>
 
-    <!-- TABLA -->
-    <div id="seccion-tabla" class="card">
-      <h2><i class="bi bi-list-check"></i> Lista de Productos (<span id="total">0</span>)</h2>
-      <div class="filtros">
-        <input type="text" id="filtro-buscar" class="form-control" placeholder="🔍 Buscar..." oninput="renderTabla()">
-        <select id="filtro-categoria" class="form-select" onchange="renderTabla()"></select>
-        <select id="filtro-disponible" class="form-select" onchange="renderTabla()">
-          <option value="">Todos los estados</option>
-          <option value="true">✅ Disponibles</option>
-          <option value="false">❌ No disponibles</option>
-        </select>
+    <!-- MODAL CATEGORÍAS -->
+    <div
+      class="modal-overlay"
+      id="modal-cats"
+      onclick="if (event.target === this) cerrarModal();"
+    >
+      <div class="modal-box">
+        <h3><i class="bi bi-tags-fill"></i> Gestionar Categorías</h3>
+        <div class="cat-input-row" style="margin: 15px 0">
+          <input
+            type="text"
+            id="inp-nueva-cat"
+            class="form-control"
+            placeholder="Nueva categoría..."
+          />
+          <button
+            class="btn-guardar btn btn-primary"
+            onclick="agregarCategoria()"
+          >
+            <i class="bi bi-plus"></i>
+          </button>
+        </div>
+        <div id="lista-categorias"></div>
+        <button class="btn btn-secondary w-100 mt-2" onclick="cerrarModal()">
+          Cerrar
+        </button>
       </div>
-      <div id="tabla-container" class="table-responsive"></div>
     </div>
-  </div>
 
-  <!-- MODAL CATEGORÍAS -->
-  <div class="modal-overlay" id="modal-cats" onclick="if(event.target===this) cerrarModal()">
-    <div class="modal-box">
-      <h3><i class="bi bi-tags-fill"></i> Gestionar Categorías</h3>
-      <div class="cat-input-row" style="margin: 15px 0;">
-        <input type="text" id="inp-nueva-cat" class="form-control" placeholder="Nueva categoría...">
-        <button class="btn-guardar btn btn-primary" onclick="agregarCategoria()"><i class="bi bi-plus"></i></button>
-      </div>
-      <div id="lista-categorias"></div>
-      <button class="btn btn-secondary w-100 mt-2" onclick="cerrarModal()">Cerrar</button>
-    </div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-    crossorigin="anonymous"></script>
-  <script src="app.js"></script>
-</body>
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+    ></script>
+    <script src="app.js"></script>
+  </body>
 </html>

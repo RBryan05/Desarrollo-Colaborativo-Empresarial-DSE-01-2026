@@ -52,6 +52,9 @@ function guardar() {
   if (!nombre || isNaN(precio) || isNaN(stock)) {
     Swal.fire("Error", "Completa los campos obligatorios", "error");
     return;
+  } else if (precio <= 0) {
+    Swal.fire("Error", "El precio debe ser mayor que cero", "error");
+    return;
   }
 
   if (editandoId !== null) {
@@ -97,6 +100,10 @@ function editar(id) {
   document.getElementById("inp-disponible").checked = p.disponible;
 
   document.getElementById("form-titulo").innerText = "Editar Producto";
+  document.getElementById("form-icono").className = "bi bi-pencil-square";
+  console.log(document.getElementById("form-icono"));
+  document.getElementById("link-form").innerHTML =
+    '<i class="bi bi-pencil-square"></i> Editar Producto'; // ← NUEVO
   document.getElementById("btn-cancelar").style.display = "inline-block";
 
   mostrarSeccion("seccion-form");
@@ -324,7 +331,10 @@ function limpiarFormulario() {
   document.getElementById("inp-stock").value = "";
   document.getElementById("inp-descripcion").value = "";
   document.getElementById("form-titulo").innerText = "Agregar Producto";
+  document.getElementById("link-form").innerHTML =
+    '<i class="bi bi-plus-square"></i> Nuevo Producto'; // ← NUEVO
   document.getElementById("btn-cancelar").style.display = "none";
+  document.getElementById("form-icono").className = "bi bi-plus-circle";
 }
 
 function cancelar() {
